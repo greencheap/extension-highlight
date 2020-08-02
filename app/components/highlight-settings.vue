@@ -1,51 +1,51 @@
 <template>
+    <form class="uk-form-horizontal uk-margin-large" @submit.prevent="save">
+        <div class="uk-modal-header">
+            <h1 class="uk-h3">{{ 'Highlight Settings' | trans }}</h1>
+        </div>
+        <div class="uk-modal-body">
+            <div class="uk-margin">
+                <label class="uk-form-label uk-text-left">{{ 'Style' | trans }}</label>
+                <div class="uk-form-controls">
+                    <select v-show="styles.length" v-model="package.config.style" class="uk-select" id="input-style">
+                        <option v-for="(option , id) in styles" :key="id" :value="option">
+                            {{ option }}
+                        </option>
+                    </select>
+                    <div v-show="!styles.length">
+                        {{ 'Loading styles...' | trans }}
+                    </div>
+                </div>
+            </div>
 
-    <div class="uk-form uk-form-horizontal">
-        <h1>{{ 'Highlight Settings' | trans }}</h1>
-        <div class="uk-form-row">
-            <label class="uk-form-label" for="input-style">{{ 'Style' | trans }}</label>
-            <div class="uk-form-controls">
-                <select v-show="styles.length" v-model="package.config.style" id="input-style">
-                    <option v-for="(option , id) in styles" :key="id" :value="option">
-                        {{ option }}
-                    </option>
-                </select>
-                <div v-show="!styles.length">
-                    {{ 'Loading styles...' | trans }}
+            <div class="uk-margin">
+                <label class="uk-form-label uk-text-left">{{ 'Pages' | trans }}</label>
+                <div class="uk-form-controls">
+                    <input-tree :active.sync="package.config.nodes"></input-tree>
+                </div>
+            </div>
+
+            <div class="uk-margin">
+                <label class="uk-form-label uk-text-left" for="input-enable-auto">{{ 'Auto Detect' | trans }}</label>
+                <div class="uk-form-controls uk-form-controls-text">
+                    <input v-model="package.config.autodetect" type="checkbox" class="uk-checkbox" id="input-enable-auto" name="input-enable-auto" value="auto">
+                    <label for="input-enable-auto">
+                        {{ 'Only load when code found on page' | trans }}
+                    </label>
                 </div>
             </div>
         </div>
-
-        <div class="uk-form-row">
-            <label class="uk-form-label">{{ 'Pages' | trans }}</label>
-            <div class="uk-form-controls uk-form-controls-text">
-                <input-tree :active.sync="package.config.nodes"></input-tree>
-            </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button class="uk-button uk-button-primary" type="submit">{{ 'Save' | trans }}</button>
         </div>
-
-        <div class="uk-form-row">
-            <label class="uk-form-label" for="input-enable-auto">{{ 'Auto Detect' | trans }}</label>
-            <div class="uk-form-controls uk-form-controls-text">
-                <input v-model="package.config.autodetect" type="checkbox" id="input-enable-auto" name="input-enable-auto" value="auto">
-                <label for="input-enable-auto">
-                    {{ 'Only load when code found on page' | trans }}
-                </label>
-            </div>
-        </div>
-
-        <div class="uk-form-row uk-margin-top">
-            <div class="uk-form-controls">
-                <button class="uk-button uk-button-primary" @click="save">{{ 'Save' | trans }}</button>
-            </div>
-        </div>
-
-    </div>
-
+    </form>
 </template>
 
 <script>
 
-    let highlight = {
+    module.exports = {
+        name: 'highlight',
+
         settings: true,
 
         props: ['package'],
@@ -64,7 +64,7 @@
 
             load() {
                 this.$http.get('admin/highlight/config').then(function (response) {
-                    this.$set('styles', response.data.styles);
+                    this.$set(this, 'styles', response.body.styles);
                 }).catch(function () {
                     this.$notify('Could not load styles.');
                 });
@@ -85,6 +85,5 @@
        }
     };
 
-    export default highlight
-    window.Extensions.components['highlight-settings'] = highlight;
+    window.Extensions.components['highlight-settings'] = module.exports;
 </script>
