@@ -1,7 +1,7 @@
 {
     "name": "greencheap/highlight",
     "type": "greencheap-extension",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "title": "Highlight",
     "description": "Makes <pre> tags in your posts more organized.",
     "license": "MIT",
